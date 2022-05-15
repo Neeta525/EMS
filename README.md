@@ -1,4 +1,4 @@
-# EMS - Employee Mangaement System
+# EMS - Employee Management System
 
 
 ## Table of Contents
