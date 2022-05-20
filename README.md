@@ -34,7 +34,7 @@ Please see contact information below to inquire about contributing to this proje
 N/A
 
 ## Questions
-'This is my name and contact info. If you have questions, please reach out!'
+This is my name and contact info. If you have questions, please reach out!
 - :pencil2: Anita Chavez 
 - :octocat: [Neeta525](https://github.com/Neeta525)
 - :email: starry-days@hotmail.com
