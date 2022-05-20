@@ -2,9 +2,9 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer')
 const consoleTable = require('console.table');
-const { createConnection } = require('net');
+// const { createConnection } = require('net');
 
-const PORT = process.env.PORT || 3001;
+// const PORT = process.env.PORT || 3001;
 
 
 // Connect to database
@@ -17,31 +17,31 @@ const db = mysql.createConnection(
     }
 );
 
-createConnection.connect(err => {
-    if (err) throw err;
-    console.log('connected');
-    afterConnection();
-});
+// createConnection.connect(err => {
+//     if (err) throw err;
+//     console.log('connected');
+//     afterConnection();
+// });
 
 //welcome Image
-afterConnection = () => {
-    console.log("********************************")
-    console.log("*                              *")
-    console.log("*             EMS              *")
-    console.log("*  Employee Management System  *")
-    console.log("*                              *")
-    console.log("********************************")
-    startPrompts();
-};
+// afterConnection = () => {
+//     console.log("********************************")
+//     console.log("*                              *")
+//     console.log("*             EMS              *")
+//     console.log("*  Employee Management System  *")
+//     console.log("*                              *")
+//     console.log("********************************")
+//     startPrompts();
+// };
 
 //starts prompts
-const startPrompts = () => {
-    inquirer.prompt ([
+function startPrompts () {
+return inquirer.prompt ([
         {
             type: 'list',
             name: 'choice',
             message: 'Please choose one of the following options.',
-            choice: [
+            choices: [
                 'View all departments',
                 'View all roles',
                 'View all employees',
@@ -53,37 +53,42 @@ const startPrompts = () => {
             ]
         }
     ])
+    .then(function(res) {
+        console.log(res)
+    })
+
 
 //Switch for options 
-.then((response) => {
-    switch (response.choice) {
-        case 'View all departments':
-            viewDepartments();
-            break;
-        case 'View all Roles':
-            viewRoles();
-            break;
-        case 'View all employees':
-            viewEmployees();
-            break;
-        case 'Add a department':
-            addDepartment();
-            break;    
-        case 'Add a role':
-            addRole();
-            break;
-        case 'Add an Employee':
-            addEmployee();
-            break;
-        case 'Update a Role':
-            updateRole();
-            break;
-        case 'Quit':
-            quit();
-            break;    
-    }
-})
+// .then((response) => {
+//     switch (response.choice) {
+//         case 'View all departments':
+//             viewDepartments();
+//             break;
+//         case 'View all Roles':
+//             viewRoles();
+//             break;
+//         case 'View all employees':
+//             viewEmployees();
+//             break;
+//         case 'Add a department':
+//             addDepartment();
+//             break;    
+//         case 'Add a role':
+//             addRole();
+//             break;
+//         case 'Add an Employee':
+//             addEmployee();
+//             break;
+//         case 'Update a Role':
+//             updateRole();
+//             break;
+//         case 'Quit':
+//             quit();
+//             break;    
+//     }
+// })
 }
+startPrompts();
 //Function to view Departments
 function viewDepartments() {
     const request = "SELECT * FROM departments";
@@ -261,12 +266,16 @@ async function addEmployee() {
 
 //function to update a role
 async function updateRole() {
-    inquirer.prompt([
+    const sql = "SELECT * FROM employees"
+    db.query (sql, (err, res) => {
+        console.log(res)
+    })
+    return inquirer.prompt([
     {
         type: 'list',
         name: 'employeeNames',
         message: 'Please select the employee you would like to update',
-        choice: 
+        choices: ["ch", "sh"]
     },   
     {
         type: 'list',
@@ -290,4 +299,3 @@ async function updateRole() {
     });
 }
 
-startPrompts();
