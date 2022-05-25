@@ -1,10 +1,11 @@
 // Import and require mysql2
 const mysql = require('mysql2');
-const inquirer = require('inquirer')
+const inquirer = require('inquirer');
 const consoleTable = require('console.table');
 // const { createConnection } = require('net');
+var startPrompts = startPrompts;
 
-// const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
 
 // Connect to database
@@ -12,18 +13,19 @@ const db = mysql.createConnection(
     {
     host: 'localhost',
     user: 'root',
-    password: 'generic_pw',
-    database: 'employees_db'
+    password: "genericPW",
+    database: "my_employees"
     }
 );
 
-// createConnection.connect(err => {
-//     if (err) throw err;
-//     console.log('connected');
-//     afterConnection();
-// });
+db.connect(err => {
+    if (err) throw err;
+    console.log('connected');
+    startPrompts();
+    // afterConnection();
+});
 
-//welcome Image
+// // welcome Image
 // afterConnection = () => {
 //     console.log("********************************")
 //     console.log("*                              *")
@@ -36,7 +38,7 @@ const db = mysql.createConnection(
 
 //starts prompts
 function startPrompts () {
-return inquirer.prompt ([
+inquirer.prompt ([
         {
             type: 'list',
             name: 'choice',
@@ -48,133 +50,79 @@ return inquirer.prompt ([
                 'Add a department',
                 'Add a role',
                 'Add an employee',
-                'Update an employee role',
+                'Update a role',
                 'Quit'
             ]
         }
     ])
-    .then(function(res) {
-        console.log(res)
-    })
-
-
-//Switch for options 
-// .then((response) => {
-//     switch (response.choice) {
-//         case 'View all departments':
-//             viewDepartments();
-//             break;
-//         case 'View all Roles':
-//             viewRoles();
-//             break;
-//         case 'View all employees':
-//             viewEmployees();
-//             break;
-//         case 'Add a department':
-//             addDepartment();
-//             break;    
-//         case 'Add a role':
-//             addRole();
-//             break;
-//         case 'Add an Employee':
-//             addEmployee();
-//             break;
-//         case 'Update a Role':
-//             updateRole();
-//             break;
-//         case 'Quit':
-//             quit();
-//             break;    
-//     }
-// })
+//     .then(function(res) {
+//         console.log(res)
+//     })
+// }
+// Switch for options 
+.then((res) => { 
+    let choice = res.choice;
+    switch (choice) {
+        case 'View all departments':
+            // console.log(choice)
+            viewDepartments();
+            break;
+        case 'View all roles':
+            viewRoles();
+            break;
+        case 'View all employees':
+            viewEmployees();
+            break;
+        case 'Add a department':
+            addDepartment();
+            break;    
+        case 'Add a role':
+            addRole();
+            break;
+        case 'Add an employee':
+            addEmployee();
+            break;
+        case 'Update a role':
+            updateRole();
+            break;
+        case 'Quit':
+            quit();
+            break;    
+    }
+})
 }
-startPrompts();
-//Function to view Departments
+
 function viewDepartments() {
     const request = "SELECT * FROM departments";
     db.query(request, function(err, res) {
         if (err) throw err;
         console.log("Viewing all Departments");
         console.table(res);
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'choice',
-                message: 'Please choose an option.',
-                choices: [
-                    'Main Menu',
-                ]
-            }
-        ])
-        .then((response) => {
-            switch (response.choice) {
-                case 'Main Menu':
-                startPrompts();
-                break;
-                case 'Quit':
-                Quit();
-            }
-        })
+        startPrompts();
     })
 }
 
-//Function to view all roles
 function viewRoles() {
     const request = "SELECT * FROM roles";
     db.query(request, function(err, res) {
         if (err) throw err;
         console.log("Viewing all Roles");
         console.table(res);
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'choice',
-                message: 'Please choose an option.',
-                choices: [
-                    'Main Menu',
-                ]
-            }
-        ])
-        .then((response) => {
-            switch (response.choice) {
-                case 'Main Menu':
-                startPrompts();
-                break;
-                case 'Quit':
-                Quit();
-            }
-        })
-    })
+    });
+    startPrompts();
 }
 
-//Function to view all Employees
 function viewEmployees() {
     const request = "SELECT * FROM employees";
     db.query(request, function(err, res) {
         if (err) throw err;
-        console.log("Viewing all Departments");
+        console.log("Viewing all Roles");
         console.table(res);
-        inquirer.prompt([
-            {
-                type: 'list',
-                name: 'choice',
-                message: 'Please choose an option.',
-                choices: [
-                    'Main Menu',
-                ]
-            }
-        ])
-        .then((response) => {
-            switch (response.choice) {
-                case 'Main Menu':
-                startPrompts();
-                break;
-                case 'Quit':
-                Quit();
-            }
-        })
-    })
+    });
+    startPrompts();
 }
+
+
 
 //function to add a new department
 async function addDepartment() {
@@ -184,9 +132,15 @@ async function addDepartment() {
         message: 'Please enter the name of the department you are adding.'
     }])
     .then((response) => {
-        addDataTo('departments', response);
+
+        const sql = `insert into departments(dept_name) values(?)`;
+        db.query(sql, [response.name], (err, res) => {
+            console.log("department has been added");
+        }); 
+        startPrompts();
     });
 }
+
 
 //function to add a role
 async function addRole() {
@@ -202,20 +156,20 @@ async function addRole() {
         message: 'Please enter the salary for this new role.'
     },
     {
-        type: 'list',
+        type: 'input',
         name: 'department',
-        message: 'Please choose the department for this new role.',
-        choices: [
-            'Network',
-            'Systems',
-            'Digital Media',
-            'IT'
-    ]    
+        message: 'Please choose the department for this new role.'
     }     
 ])
     .then((response) => {
-        addDataTo('roles', response);
+        const sql = `insert into roles(title, salary, dept_id) values(?,?,?)`;
+        db.query(sql, [response.name, response.salary, response.department], (err, res) => {
+            console.log("role has been added");
+        }
+        )
+        startPrompts();
     });
+    
 }
 
 //function to add an employee
@@ -228,74 +182,53 @@ async function addEmployee() {
     },
     {
         type: 'input',
-        name: 'LastName',
+        name: 'lastName',
         message: 'Please enter the last name of the employee you are adding.'
     },
     {
-        type: 'list',
-        name: 'role',
-        message: 'Please choose the role for this employee.',
-        choices: [
-            'Sr. Network Engineer',
-            'Jr. Network Enginerer',
-            'Sr. Systems Enginerer',
-            'Jr. Systems Engineer',
-            'Sr. Digital Media Engineer',
-            'Jr. Digital Media Engineer',
-            'Technical Support Supervisor',
-            'Technical Specialist',
-            'Information Technician'
-        ]
+        type: 'input',
+        name: 'role_id',
+        message: 'Please enter the role ID for this employee.'
     },
     {
-        type: 'list',
-        name: 'department',
-        message: 'Please choose the department for this new role.',
-        choices: [
-            'Network',
-            'Systems',
-            'Digital Media',
-            'IT'
-    ]    
+        type: 'input',
+        name: 'manager_id',
+        message: 'Please enter the manager ID for this new role.'
     }     
 ])
     .then((response) => {
-        addDataTo('employees', response);
+        const sql = `insert into employees(first_name, last_name, role_id, manager_id) values(?,?,?,?)`;
+        db.query(sql, [response.firstName, response.lastName, response.role_id, response.manager_id], (err, res) => {
+            console.log("employee has been added");
+        }
+        )
+        startPrompts(); 
     });
 }
 
 //function to update a role
 async function updateRole() {
-    const sql = "SELECT * FROM employees"
-    db.query (sql, (err, res) => {
-        console.log(res)
-    })
+
     return inquirer.prompt([
+        {
+            type: 'input',
+            name: "firstName",
+            message: 'Please enter the employee\'s first name'
+        },
     {
-        type: 'list',
-        name: 'employeeNames',
-        message: 'Please select the employee you would like to update',
-        choices: ["ch", "sh"]
+        type: 'input',
+        name: 'role_id',
+        message: 'Please enter employee\'s new role ID',
     },   
-    {
-        type: 'list',
-        name: 'role',
-        message: 'Please choose their new role.',
-        choices: [
-            'Sr. Network Engineer',
-            'Jr. Network Enginerer',
-            'Sr. Systems Enginerer',
-            'Jr. Systems Engineer',
-            'Sr. Digital Media Engineer',
-            'Jr. Digital Media Engineer',
-            'Technical Support Supervisor',
-            'Technical Specialist',
-            'Information Technician'
-        ]
-    }  
 ])
     .then((response) => {
-        addDataTo('employees', response);
+        const sql = `update employees set ? WHERE ? `;
+        db.query(sql, [{role_id: response.role_id}, {first_name: response.firstName}], (err, res) => {
+            console.log("employee has been updated");
+        }
+        ) 
+        startPrompts();
     });
+    
 }
 
