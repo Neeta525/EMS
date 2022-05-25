@@ -23,7 +23,7 @@ The user will need to install npm i, npm i inquirer, and npm i mysql. User then 
 
 ## Usage
 screenshot and video coming soon...
-![alt text](...)
+![alt text]()
 Click on this link to view it in action
 [video](...)
 
