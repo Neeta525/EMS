@@ -23,9 +23,9 @@ The user will need to install npm i, npm i inquirer, and npm i mysql. User then 
 
 ## Usage
 screenshot and video coming soon...
-![alt text]()
+![screenshot](assets/emsSS.png)
 Click on this link to view it in action
-[video](...)
+[video](https://youtu.be/c35qWaSI4sM)
 
 ## Contributing
 Please see contact information below to inquire about contributing to this project.
